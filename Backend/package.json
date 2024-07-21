@@ -1,0 +1,33 @@
+{
+  "name": "chess",
+  "version": "1.0.0",
+  "description": "online chess playing application",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "babel src -d dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Saiaditya004/Chess.git"
+  },
+  "keywords": [
+    "node",
+    "npm",
+    "init"
+  ],
+  "author": "Sai Aditya Patil",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Saiaditya004/Chess/issues"
+  },
+  "homepage": "https://github.com/Saiaditya004/Chess#readme",
+  "dependencies": {
+    "@types/ws": "^8.5.10",
+    "chess.js": "^1.0.0-beta.8",
+    "dotenv": "^16.4.5",
+    "pg": "^8.12.0",
+    "uuid": "^10.0.0",
+    "ws": "^8.17.1"
+  }
+}

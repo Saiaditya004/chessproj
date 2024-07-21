@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "target": "ES6",
+      "module": "commonjs",             
+      "checkJs": true,                  
+      "allowSyntheticDefaultImports": true,  
+      "baseUrl": "./src",
+      "rootDir": "./src",
+      "outDir": "./dist",                   
+      "paths": {                        
+        "@app/*": ["src/app/*"]
+      }
+    },
+    "include": ["src/**/*.js"],          
+    "exclude": ["node_modules"]        
+  }
+  
