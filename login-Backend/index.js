@@ -17,7 +17,6 @@ const pool = new Pool({
     port: process.env.DB_PORT,
 });
 
-// Register a new user
 app.post('/register', async (req, res) => {
     const { username, password, email, date_of_birth, country } = req.body;
 
@@ -36,7 +35,6 @@ app.post('/register', async (req, res) => {
     }
 });
 
-// Login user
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
