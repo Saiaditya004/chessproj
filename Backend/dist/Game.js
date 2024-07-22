@@ -1,21 +1,16 @@
 import { Chess } from 'chess.js';
 import { GAME_OVER, INIT_GAME, MOVE } from './messages.js';
-// Backend/Game.js
-import { saveGameDetails, saveMove } from './db.js';
-
-// Rest of the Game.js code remains the same
-
+import { updateGameDetails, saveGameDetails, saveMove } from './db.js';
 class Game {
   constructor(player1, player2) {
     this.player1 = player1;
     this.player2 = player2;
     this.board = new Chess();
     this.startTime = new Date();
-    this.moves = []; // Store moves
-    this.gameId = Date.now(); // Example game ID, replace with proper ID generation
-    this.eventID = 1; // Example event ID, replace with actual event ID
-    this.timeControl = 'standard'; // Example time control, replace with actual value
-
+    this.moves = [];
+    this.gameId = Date.now();
+    this.eventID = 1;
+    this.timeControl = 'standard';
     this.player1.send(JSON.stringify({
       type: INIT_GAME,
       payload: {
@@ -28,9 +23,9 @@ class Game {
         color: 'b'
       }
     }));
+    saveGameDetails(this.gameId, this.eventID, 1, 2);
   }
   async makeMove(socket, move) {
-    // Check current turn before making a move
     if (this.board.turn() === 'w' && socket !== this.player1) {
       return;
     }
@@ -42,11 +37,9 @@ class Game {
       if (!result) {
         return;
       }
-
-      // Save the move
-      const playerId = socket === this.player1 ? 1 : 2; // Use actual player IDs
+      const playerId = socket === this.player1 ? 1 : 2;
       const moveNumber = this.board.history().length;
-      const moveId = Date.now(); // Use a proper unique ID generation strategy
+      const moveId = Date.now();
       const timestamp = new Date();
       await saveMove(this.gameId, moveId, moveNumber, playerId, this.board.fen(), timestamp);
       this.moves.push({
@@ -57,11 +50,9 @@ class Game {
         move,
         timestamp
       });
-
-      // Check if the game is over
       if (this.board.isGameOver()) {
         const winner = this.board.turn() === 'w' ? 'black' : 'white';
-        await saveGameDetails(this.gameId, this.eventID, winner, this.board.pgn({
+        await updateGameDetails(this.gameId, this.eventID, winner, this.board.pgn({
           maxWidth: 5,
           newline: '  '
         }), 1, 2); // Use actual IDs

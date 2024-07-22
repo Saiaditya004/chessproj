@@ -1,6 +1,6 @@
 import { Chess } from 'chess.js';
 import { GAME_OVER, INIT_GAME, MOVE } from './messages.js';
-import { saveGameDetails, saveMove } from './db.js';
+import { updateGameDetails,saveGameDetails, saveMove } from './db.js';
 
 
 
@@ -27,6 +27,7 @@ class Game {
                 color: 'b'
             }
         }));
+        saveGameDetails(this.gameId, this.eventID, 1, 2);
     }
 
     async makeMove(socket, move) {
@@ -61,7 +62,7 @@ class Game {
             if (this.board.isGameOver()) {
                 const winner = this.board.turn() === 'w' ? 'black' : 'white';
     
-                await saveGameDetails(this.gameId, this.eventID, winner, this.board.pgn({ maxWidth: 5, newline: '  ' }), 1, 2); // Use actual IDs
+                await updateGameDetails(this.gameId, this.eventID, winner, this.board.pgn({ maxWidth: 5, newline: '  ' }), 1, 2); // Use actual IDs
     
                 this.player1.send(JSON.stringify({
                     type: GAME_OVER,
