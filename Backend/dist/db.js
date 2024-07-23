@@ -88,17 +88,6 @@ async function updateGameDetails(gameId, eventID, result, moves, whitePlayerID, 
   } catch (err) {
     console.error('Error saving game details:', err);
   }
-  try {
-    const result1 = await pool.query('SELECT COUNT(*) AS num FROM games WHERE white_player_id = $1', [whitePlayerID]);
-    let no_of_games_white = result1.rows[0]?.num;
-    const result2 = await pool.query('SELECT COUNT(*) AS num FROM games WHERE black_player_id = $1', [blackPlayerID]);
-    let no_of_games_black = result2.rows[0]?.num;
-    const result3 = await pool.query('SELECT result FROM games WHERE black_player_id = $1', [blackPlayerID]);
-    let winner = result1.rows[0]?.result;
-  } catch (err) {
-    console.error(err.message);
-    console.log('Database query error');
-  }
 }
 async function saveMove(gameId, moveId, moveNumber, playerId, move, timestamp) {
   const query = `
