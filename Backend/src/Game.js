@@ -60,9 +60,10 @@ class Game {
                 timestamp
             });
             if (this.board.isGameOver()) {
-                const winner = this.board.turn() === 'w' ? 'black' : 'white';
+                if(this.board.isCheckmate()){
+                    const winner = this.board.turn() === 'w' ? 2: 1;
     
-                await updateGameDetails(this.gameId, this.eventID, winner, this.board.pgn({ maxWidth: 5, newline: '  ' }), 1, 2); // Use actual IDs
+                await updateGameDetails(this.gameId, this.eventID, winner, this.board.pgn({ maxWidth: 5, newline: '   ' }), 1, 2); // Use actual IDs
     
                 this.player1.send(JSON.stringify({
                     type: GAME_OVER,
@@ -76,6 +77,23 @@ class Game {
                         winner: winner
                     }
                 }));
+                }
+                else{
+                    await updateGameDetails(this.gameId, this.eventID, 0, this.board.pgn({ maxWidth: 5, newline: '   ' }), 1, 2); // Use actual IDs
+    
+                    this.player1.send(JSON.stringify({
+                        type: GAME_OVER,
+                        payload: {
+                            winner: 0
+                        }
+                    }));
+                    this.player2.send(JSON.stringify({
+                        type: GAME_OVER,
+                        payload: {
+                            winner: 0
+                        }
+                    }));
+                }
                 return;
             }
     
@@ -92,7 +110,7 @@ class Game {
             }
     
             if (!this.player1 || !this.player2) {
-                const winner = !this.player1 ? 'black' : 'white';
+                const winner = !this.player1 ? 2 : 1;
                 this.player1 && this.player1.send(JSON.stringify({
                     type: GAME_OVER,
                     payload: { winner }
@@ -116,7 +134,7 @@ class Game {
             if (this.player2) {
                 this.player2.send(JSON.stringify({
                     type: GAME_OVER,
-                    payload: { winner: 'black' }
+                    payload: { winner: 2 }
                 }));
             }
         } else if (disconnectedSocket === this.player2) {
@@ -124,7 +142,7 @@ class Game {
             if (this.player1) {
                 this.player1.send(JSON.stringify({
                     type: GAME_OVER,
-                    payload: { winner: 'white' }
+                    payload: { winner: 1 }
                 }));
             }
         }

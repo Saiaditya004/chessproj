@@ -26,7 +26,15 @@ app.post('/register', async (req, res) => {
             'INSERT INTO users (username, password, email, date_of_birth, country, rating) VALUES ($1, $2, $3, $4, $5, 1000) RETURNING *',
             [username, hashedPassword, email, date_of_birth, country]
         );
-        res.json(newUser.rows[0]);
+
+        const userId = newUser.rows[0].id;
+
+        const newUserStats = await pool.query(
+            'INSERT INTO UserStatistics(UserID, TotalGames, Wins, Losses, Draws, HighestRating, CurrentRating) VALUES ($1, 0, 0, 0, 0, 1000, 1000) RETURNING *',
+            [userId]
+        );
+
+        res.json({ user: newUser.rows[0], stats: newUserStats.rows[0] });
     } catch (err) {
         if (err.code === '23505') {
             return res.status(400).json({ error: 'Username or email already exists' });

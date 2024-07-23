@@ -51,24 +51,44 @@ class Game {
         timestamp
       });
       if (this.board.isGameOver()) {
-        const winner = this.board.turn() === 'w' ? 'black' : 'white';
-        await updateGameDetails(this.gameId, this.eventID, winner, this.board.pgn({
-          maxWidth: 5,
-          newline: '  '
-        }), 1, 2); // Use actual IDs
+        if (this.board.isCheckmate()) {
+          const winner = this.board.turn() === 'w' ? 2 : 1;
+          await updateGameDetails(this.gameId, this.eventID, winner, this.board.pgn({
+            maxWidth: 5,
+            newline: '   '
+          }), 1, 2); // Use actual IDs
 
-        this.player1.send(JSON.stringify({
-          type: GAME_OVER,
-          payload: {
-            winner: winner
-          }
-        }));
-        this.player2.send(JSON.stringify({
-          type: GAME_OVER,
-          payload: {
-            winner: winner
-          }
-        }));
+          this.player1.send(JSON.stringify({
+            type: GAME_OVER,
+            payload: {
+              winner: winner
+            }
+          }));
+          this.player2.send(JSON.stringify({
+            type: GAME_OVER,
+            payload: {
+              winner: winner
+            }
+          }));
+        } else {
+          await updateGameDetails(this.gameId, this.eventID, 0, this.board.pgn({
+            maxWidth: 5,
+            newline: '   '
+          }), 1, 2); // Use actual IDs
+
+          this.player1.send(JSON.stringify({
+            type: GAME_OVER,
+            payload: {
+              winner: 0
+            }
+          }));
+          this.player2.send(JSON.stringify({
+            type: GAME_OVER,
+            payload: {
+              winner: 0
+            }
+          }));
+        }
         return;
       }
       if (this.board.turn() === 'b') {
@@ -83,7 +103,7 @@ class Game {
         }));
       }
       if (!this.player1 || !this.player2) {
-        const winner = !this.player1 ? 'black' : 'white';
+        const winner = !this.player1 ? 2 : 1;
         this.player1 && this.player1.send(JSON.stringify({
           type: GAME_OVER,
           payload: {
@@ -110,7 +130,7 @@ class Game {
         this.player2.send(JSON.stringify({
           type: GAME_OVER,
           payload: {
-            winner: 'black'
+            winner: 2
           }
         }));
       }
@@ -120,7 +140,7 @@ class Game {
         this.player1.send(JSON.stringify({
           type: GAME_OVER,
           payload: {
-            winner: 'white'
+            winner: 1
           }
         }));
       }
